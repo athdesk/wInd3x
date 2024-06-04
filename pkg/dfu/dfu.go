@@ -149,9 +149,11 @@ const (
 	ProtoVersion2 ProtoVersion = 2
 )
 
-func SendImage(usb *gousb.Device, i []byte, version ProtoVersion) error {
-	if err := Clean(usb); err != nil {
-		return fmt.Errorf("clean: %w", err)
+func SendImage(usb *gousb.Device, i []byte, version ProtoVersion, skipClean bool) error {
+	if !skipClean {
+		if err := Clean(usb); err != nil {
+			return fmt.Errorf("clean: %w", err)
+		}
 	}
 
 	if version == ProtoVersion1 {

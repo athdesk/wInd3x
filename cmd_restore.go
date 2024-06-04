@@ -89,7 +89,7 @@ var restoreCmd = &cobra.Command{
 					return fmt.Errorf("could not get wtf payload: %s", err)
 				}
 				glog.Infof("Sending WTF...")
-				if err := dfu.SendImage(app.Usb, wtf, app.Desc.Kind.DFUVersion()); err != nil {
+				if err := dfu.SendImage(app.Usb, wtf, app.Desc.Kind.DFUVersion(), false); err != nil {
 					return fmt.Errorf("Failed to send image: %w", err)
 				}
 				glog.Infof("Waiting 10s for device to switch to WTF mode...")
@@ -105,7 +105,7 @@ var restoreCmd = &cobra.Command{
 				}
 				glog.Infof("Sending recovery firmware...")
 				for i := 0; i < 10; i++ {
-					err = dfu.SendImage(app.Usb, recovery, app.Desc.Kind.DFUVersion())
+					err = dfu.SendImage(app.Usb, recovery, app.Desc.Kind.DFUVersion(), false)
 					if err == nil {
 						break
 					} else {

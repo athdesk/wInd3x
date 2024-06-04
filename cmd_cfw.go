@@ -52,7 +52,7 @@ var cfwRunCmd = &cobra.Command{
 			return fmt.Errorf("Failed to run wInd3x exploit: %w", err)
 		}
 		glog.Infof("Sending defanged WTF...")
-		if err := dfu.SendImage(app.Usb, wtf, app.Desc.Kind.DFUVersion()); err != nil {
+		if err := dfu.SendImage(app.Usb, wtf, app.Desc.Kind.DFUVersion(), false); err != nil {
 			return fmt.Errorf("Failed to send image: %w", err)
 		}
 
@@ -78,8 +78,16 @@ var cfwRunCmd = &cobra.Command{
 		time.Sleep(time.Second)
 
 		glog.Infof("Sending firmware...")
+
+		// Nano4's WTF gets very upset (i suspect another memory corruption), when it receives a RequestClrStatus
+		shouldSkipClean := false
+		switch app.Desc.Kind {
+		case devices.Nano4:
+			shouldSkipClean = true
+		}
+
 		for i := 0; i < 10; i++ {
-			err = dfu.SendImage(app.Usb, fwb, app.Desc.Kind.DFUVersion())
+			err = dfu.SendImage(app.Usb, fwb, app.Desc.Kind.DFUVersion(), shouldSkipClean)
 			if err == nil {
 				break
 			} else {
@@ -189,7 +197,7 @@ var cfwN3gTestCmd = &cobra.Command{
 			return fmt.Errorf("Failed to run wInd3x exploit: %w", err)
 		}
 		glog.Infof("Sending defanged bootloader...")
-		if err := dfu.SendImage(app.Usb, imb, app.Desc.Kind.DFUVersion()); err != nil {
+		if err := dfu.SendImage(app.Usb, imb, app.Desc.Kind.DFUVersion(), false); err != nil {
 			return fmt.Errorf("Failed to send image: %w", err)
 		}
 		return nil

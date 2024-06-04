@@ -32,7 +32,7 @@ var runCmd = &cobra.Command{
 		if err := dfu.Clean(app.Usb); err != nil {
 			return fmt.Errorf("Failed to clean: %w", err)
 		}
-		if err := dfu.SendImage(app.Usb, data, app.Desc.Kind.DFUVersion()); err != nil {
+		if err := dfu.SendImage(app.Usb, data, app.Desc.Kind.DFUVersion(), false); err != nil {
 			return fmt.Errorf("Failed to send image: %w", err)
 		}
 		glog.Infof("Image sent.")
